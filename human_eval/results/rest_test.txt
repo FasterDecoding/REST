@@ -1,0 +1,7 @@
+loading the datastore ...
+datastore loaded!
+token_spans:  [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+accept_lengths_tree_average:  2.978881842847655
+accept_lengths_tree_average_micro:  2.6481571486431754
+avg_time_per_token:  0.011493277
+avg_time_per_token_micro:  0.01133284168328882
