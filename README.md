@@ -111,7 +111,16 @@ Note that the RAYON_NUM_THREADS environment variable control the maximum number 
 In the examples above, we default to use Vicuna and CodeLlama. But actually you can use any LLaMA-based models you like by simply changing the "--model-path" argument. You can also build the datastore from any data you like. If you want to use architectures other than LLaMA, you can also modify the file model/modeling_llama_kv.py to match the corresponding model.
 
 ## Citation
-TODO
+```
+@misc{he2023rest,
+      title={REST: Retrieval-Based Speculative Decoding}, 
+      author={Zhenyu He and Zexuan Zhong and Tianle Cai and Jason D Lee and Di He},
+      year={2023},
+      eprint={2311.08252},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
 
 ## Acknowledgements
 The codebase is from [Medusa](https://github.com/FasterDecoding/Medusa) and influenced by remarkable projects from the LLM community, including [FastChat](https://github.com/lm-sys/FastChat), [TinyChat](https://github.com/mit-han-lab/llm-awq/tree/main/), [vllm](https://github.com/vllm-project/vllm) and many others.
