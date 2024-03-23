@@ -40,10 +40,7 @@ if args.large_datastore:
             token_list = tokenizer.encode(sample)
             writer.add_entry(token_list)
 else:
-
-    dataset_path = None
-    assert dataset_path is not None, "please download the dataset from https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered"
-    dataset = json.load(open(dataset_path))
+    dataset = load_dataset("Aeala/ShareGPT_Vicuna_unfiltered")
     total_length = len(dataset)
     print("number of samples: ", total_length)
     for conversations in tqdm(dataset, total=total_length):
