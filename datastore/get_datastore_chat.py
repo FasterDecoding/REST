@@ -40,10 +40,10 @@ if args.large_datastore:
             token_list = tokenizer.encode(sample)
             writer.add_entry(token_list)
 else:
-    dataset = load_dataset("Aeala/ShareGPT_Vicuna_unfiltered")
+    dataset = load_dataset('Aeala/ShareGPT_Vicuna_unfiltered', split='train')
     total_length = len(dataset)
-    print("number of samples: ", total_length)
     for conversations in tqdm(dataset, total=total_length):
+        print('conversations', conversations, type(conversations))
         for sample in conversations['conversations']:
             token_list = tokenizer.encode(sample['value'])
             writer.add_entry(token_list)
