@@ -1,5 +1,4 @@
 torch
-fschat[model_worker,webui]
 maturin==0.12
 numpy==1.26.1
 tqdm==4.66.1
@@ -8,3 +7,6 @@ accelerate==0.24.1
 datasets
 openai
 anthropic
+sentencepiece
+protobuf
+shortuuid
