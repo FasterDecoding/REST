@@ -7,3 +7,5 @@ accelerate==0.24.1
 datasets
 openai
 anthropic
+sentencepiece
+protobuf
