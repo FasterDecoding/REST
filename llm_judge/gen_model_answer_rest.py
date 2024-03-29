@@ -269,7 +269,7 @@ def get_model_answers(
                 if conv.name == "xgen" and output.startswith("Assistant:"):
                     output = output.replace("Assistant:", "", 1).strip()
             except RuntimeError as e:
-                print("ERROR question ID: ", question["question_id"])
+                print(f"question ID {question['question_id']} errored out with {e}")
                 output = "ERROR"
 
             turns.append(output)
