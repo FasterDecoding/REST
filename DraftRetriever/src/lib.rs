@@ -214,6 +214,7 @@ impl Reader {
         long: Option<i32>,
     ) -> PyResult<(Vec<Vec<i32>>, Vec<Vec<i32>>, Vec<i32>, Vec<i32>, Vec<Vec<i32>>)> {
 
+        // substring_i32 is just a rust version of py_substring
         let mut substring_i32 = Vec::new();
         for item in py_substring.iter() {
             let num: i32 = item.extract()?;
@@ -222,19 +223,28 @@ impl Reader {
 
         let results = Arc::new(Mutex::new(Vec::new()));
 
+        // I think each sub index is a buffer/suffix pair
         self.sub_indexes.par_iter_mut().for_each(
             |sub_index| {
                 let mut start_of_indices = None;
                 let mut end_of_indices = None;
 
+                // since suffix arrays have the suffixes in sorted order, we do a binary search
+                // over the suffix array
+                // this binary search finds the start of the matching suffixes
                 let mut left_anchor = sub_index.suffixes_file_start;
                 let mut right_anchor = sub_index.suffixes_file_end - 4;
                 while left_anchor <= right_anchor {
                     let middle_anchor = left_anchor + ((right_anchor - left_anchor) / 4 / 2 * 4);
                     sub_index.index_file.seek(SeekFrom::Start(middle_anchor as u64)).unwrap();
+                    // data_index is the value at middle_anchor in the suffix array
                     let data_index = sub_index.index_file.read_i32::<LittleEndian>().unwrap();
+                    // line is the actual suffix
                     let line = &sub_index.data[(data_index) as usize..];
 
+                    // they're not using the entire suffix. they're looking for suffixes that start with the substring they're looking for
+                    // the suffix array sorts suffixes based on the start of the suffix, so this technique is sound
+                    // the "match length" is defined by the length of substring_i32. the suffix array doesn't need to worry about "match length"
                     if line.starts_with(&substring_i32) {
                         start_of_indices = Some(middle_anchor);
                         right_anchor = middle_anchor - 4;
@@ -250,6 +260,7 @@ impl Reader {
                     return;
                 }
                 
+                // this binary search finds the end of the matching suffixes
                 let mut right_anchor = sub_index.suffixes_file_end - 4;
                 while left_anchor <= right_anchor {
                     let middle_anchor = left_anchor + ((right_anchor - left_anchor) / 4 / 2 * 4);
