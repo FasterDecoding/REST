@@ -1,9 +1,7 @@
 // The code for retrival is adapted from https://github.com/Intsights/PySubstringSearch; 
 // The code for drafft buffer is adapted from https://github.com/FasterDecoding/Medusa/blob/main/medusa/model/utils.py#L31-L124
 use ahash::AHashSet;
-use bstr::io::BufReadExt;
 use byteorder::{ReadBytesExt, WriteBytesExt, ByteOrder, LittleEndian};
-use memchr::memmem;
 use parking_lot::Mutex;
 use pyo3::exceptions;
 use pyo3::prelude::*;
@@ -21,7 +19,6 @@ use pyo3::types::PyList;
 use std::collections::BinaryHeap;
 use std::fs;
 use std::io::Cursor;
-use std::fs::OpenOptions;
 
 extern "C" {
     pub fn libsais_int(
