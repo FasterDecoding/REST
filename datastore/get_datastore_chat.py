@@ -3,7 +3,6 @@ from datasets import load_dataset
 from transformers import AutoTokenizer
 import draftretriever
 from tqdm import tqdm
-import json
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -21,13 +20,7 @@ parser.add_argument(
     help="Whether to use a large datastore",
 )
 args = parser.parse_args()
-print(args)
-
 tokenizer = AutoTokenizer.from_pretrained(args.model_path)
-
-
-def get_n_grams(list, n):
-    return set(tuple(list[i:i+n]) for i in range(len(list) - n + 1))
 
 datastore_path = './datastore_chat_large.idx' if args.large_datastore else './datastore_chat_small.idx'
 writer = draftretriever.Writer(
@@ -55,13 +48,14 @@ else:
             for sample in conversations['conversations']:
                 token_list = tokenizer.encode(sample['value'])
                 three_grams = get_n_grams(token_list, 3)
-                all_three_grams = all_three_grams.union(three_grams)
+                all_three_grams.update(three_grams)
                 four_grams = get_n_grams(token_list, 4)
-                all_four_grams = all_four_grams.union(four_grams)
+                all_four_grams.update(four_grams)
                 # writer.add_entry(token_list)
 
-            if i % 100 == 0:
+            if i % 1000 == 0:
                 f.write(f'{i},{len(all_three_grams)},{len(all_four_grams)}\n')
+                f.flush()
 
 # writer.finalize()
 
