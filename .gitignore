@@ -1,5 +1,6 @@
 # Generated files
-datastore_chat_small.idx
+*.idx
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
