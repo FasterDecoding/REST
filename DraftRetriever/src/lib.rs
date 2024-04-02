@@ -223,7 +223,7 @@ impl Reader {
 
         let results = Arc::new(Mutex::new(Vec::new()));
 
-        // I think each sub index is a buffer/suffix pair
+        // each sub index is a buffer/suffix pair
         self.sub_indexes.par_iter_mut().for_each(
             |sub_index| {
                 let mut start_of_indices = None;
@@ -242,7 +242,7 @@ impl Reader {
                     // line is the actual suffix
                     let line = &sub_index.data[(data_index) as usize..];
 
-                    // they're not using the entire suffix. they're looking for suffixes that start with the substring they're looking for
+                    // we don't use the entire suffix. we look for suffixes that start with the substring we're looking for
                     // the suffix array sorts suffixes based on the start of the suffix, so this technique is sound
                     // the "match length" is defined by the length of substring_i32. the suffix array doesn't need to worry about "match length"
                     if line.starts_with(&substring_i32) {
