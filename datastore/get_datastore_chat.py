@@ -1,8 +1,8 @@
-from datetime import datetime
 from datasets import load_dataset
 from transformers import AutoTokenizer
 import draftretriever
 from tqdm import tqdm
+import json
 
 import argparse
 parser = argparse.ArgumentParser()
@@ -20,7 +20,10 @@ parser.add_argument(
     help="Whether to use a large datastore",
 )
 args = parser.parse_args()
+print(args)
+
 tokenizer = AutoTokenizer.from_pretrained(args.model_path)
+
 
 datastore_path = './datastore_chat_large.idx' if args.large_datastore else './datastore_chat_small.idx'
 writer = draftretriever.Writer(
@@ -37,25 +40,15 @@ if args.large_datastore:
             token_list = tokenizer.encode(sample)
             writer.add_entry(token_list)
 else:
-    all_three_grams = set()
-    all_four_grams = set()
-    dataset = load_dataset('Aeala/ShareGPT_Vicuna_unfiltered', split='train')
+
+    dataset_path = None
+    assert dataset_path is not None, "please download the dataset from https://huggingface.co/datasets/Aeala/ShareGPT_Vicuna_unfiltered"
+    dataset = json.load(open(dataset_path))
     total_length = len(dataset)
-    date_string = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    with open(f'three_four_data_{date_string}.csv', 'w') as f:
-        f.write(f'i,three,four\n')
-        for i, conversations in enumerate(tqdm(dataset, total=total_length)):
-            for sample in conversations['conversations']:
-                token_list = tokenizer.encode(sample['value'])
-                three_grams = get_n_grams(token_list, 3)
-                all_three_grams.update(three_grams)
-                four_grams = get_n_grams(token_list, 4)
-                all_four_grams.update(four_grams)
-                # writer.add_entry(token_list)
+    print("number of samples: ", total_length)
+    for conversations in tqdm(dataset, total=total_length):
+        for sample in conversations['conversations']:
+            token_list = tokenizer.encode(sample['value'])
+            writer.add_entry(token_list)
 
-            if i % 1000 == 0:
-                f.write(f'{i},{len(all_three_grams)},{len(all_four_grams)}\n')
-                f.flush()
-
-# writer.finalize()
-
+writer.finalize()
