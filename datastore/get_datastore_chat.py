@@ -52,4 +52,3 @@ else:
             writer.add_entry(token_list)
 
 writer.finalize()
-

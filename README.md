@@ -93,7 +93,7 @@ python3 get_datastore_code.py --model-path codellama/CodeLlama-7b-instruct-hf --
 ### Inference on MT-Bench
 ```bash
 cd llm_judge
-RAYON_NUM_THREADS=6 CUDA_VISIBLE_DEVICES=0 python3 get_model_answer_rest.py --model-path lmsys/vicuna-7b-v1.5 --model-id vicuna-7b-v1.5 --datastore-path ../datastore/datastore_chat_small.idx
+RAYON_NUM_THREADS=6 CUDA_VISIBLE_DEVICES=0 python3 gen_model_answer_rest.py --model-path lmsys/vicuna-7b-v1.5 --model-id vicuna-7b-v1.5 --datastore-path ../datastore/datastore_chat_small.idx
 ```
 
 ### Inference on HumanEval
