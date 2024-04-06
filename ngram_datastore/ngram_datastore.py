@@ -10,22 +10,23 @@ import pickle
 class NGramDatastore:
     DEFAULT_NGRAM_N = 3
 
-    def __init__(self, dataset_name: str, model_path: str, reader: Reader) -> None:
+    def __init__(self, dataset_name: str, num_conversations: int, model_path: str, reader: Reader) -> None:
         self.dataset_name = dataset_name
+        self.num_conversations = num_conversations
         self.reader = reader
         self.model_path = model_path
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         self.datastore_dpath = f"./datastore/ngram/{dataset_name}/"
-        self.datastore_path = os.path.join(self.datastore_dpath, f"ngram-{NGramDatastore.DEFAULT_NGRAM_N}.pkl")
+        self.datastore_path = os.path.join(self.datastore_dpath, f"ngram-n{NGramDatastore.DEFAULT_NGRAM_N}-{num_conversations}convs.pkl")
         os.makedirs(self.datastore_dpath, exist_ok=True)
 
     def build(self) -> None:
         self.datastore = dict()
 
         if self.dataset_name == "Aeala/ShareGPT_Vicuna_unfiltered":
-            ngrams = get_ngrams_from_ShareGPT(self.tokenizer, self.dataset_name, NGramDatastore.DEFAULT_NGRAM_N)
+            ngrams = get_ngrams_from_ShareGPT(self.tokenizer, self.dataset_name, NGramDatastore.DEFAULT_NGRAM_N, self.num_conversations)
         elif self.dataset_name == "bigcode/the-stack":
-            pass    # TODO: make function to read ngrams from the stack dataset
+            pass # TODO: make function to read ngrams from the stack dataset
         else:
             print("We only support Aeala/ShareGPT_Vicuna_unfiltered or bigcode/the-stack datasets for now")
             quit()

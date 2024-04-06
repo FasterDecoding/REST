@@ -38,7 +38,7 @@ if args.large_datastore:
         f.write(f'i,three,four\n')
         for i, conversations in enumerate(tqdm(dataset, total=total_length)):
             for sample in conversations['data']:
-                token_list = tokenizer.encode(sample['value'])
+                token_list = tokenizer.encode(sample)
                 three_grams = get_ngrams_from_list(token_list, 3)
                 all_three_grams.update(three_grams)
                 four_grams = get_ngrams_from_list(token_list, 4)
