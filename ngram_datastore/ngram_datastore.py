@@ -8,24 +8,23 @@ import time
 import pickle
 
 class NGramDatastore:
-    DEFAULT_NGRAM_N = 3
-
-    def __init__(self, dataset_name: str, num_conversations: int, model_path: str, reader: Reader, num_top_ngrams: int) -> None:
+    def __init__(self, dataset_name: str, num_conversations: int, model_path: str, reader: Reader, ngram_n: int, num_top_ngrams: int) -> None:
         self.dataset_name = dataset_name
         self.num_conversations = num_conversations
         self.reader = reader
         self.model_path = model_path
+        self.ngram_n = ngram_n
         self.num_top_ngrams = num_top_ngrams
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
         self.datastore_dpath = f"./datastore/ngram/{dataset_name}/"
-        self.datastore_path = os.path.join(self.datastore_dpath, f"n{NGramDatastore.DEFAULT_NGRAM_N}-convs{num_conversations}-top{num_top_ngrams}.pkl")
+        self.datastore_path = os.path.join(self.datastore_dpath, f"n{self.ngram_n}-convs{num_conversations}-top{num_top_ngrams}.pkl")
         os.makedirs(self.datastore_dpath, exist_ok=True)
 
     def build(self) -> None:
         self.datastore = dict()
 
         if self.dataset_name == "Aeala/ShareGPT_Vicuna_unfiltered":
-            ngrams = get_ngrams_from_sharegpt(self.tokenizer, self.dataset_name, NGramDatastore.DEFAULT_NGRAM_N, self.num_conversations, self.num_top_ngrams)
+            ngrams = get_ngrams_from_sharegpt(self.tokenizer, self.dataset_name, self.ngram_n, self.num_conversations, self.num_top_ngrams)
         elif self.dataset_name == "bigcode/the-stack":
             pass # TODO: make function to read ngrams from the stack dataset
         else:

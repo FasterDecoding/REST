@@ -11,3 +11,4 @@ anthropic
 sentencepiece
 protobuf
 shortuuid
+click
