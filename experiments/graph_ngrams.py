@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 # Reading the CSV file
 csv_fpath = sys.argv[1]
+dataset = sys.argv[2]
 data = pd.read_csv(csv_fpath)
 
 # Plotting
@@ -19,4 +20,7 @@ plt.legend()
 
 # Show plot
 plt.grid(True)
-plt.savefig('graph.png')
+if str(dataset) == "large":
+    plt.savefig('ultra_chat_graph.png')
+else:
+    plt.savefig('sharegpt_chat_graph.png')
