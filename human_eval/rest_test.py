@@ -30,12 +30,22 @@ def run_eval(model, tokenizer, datastore, max_token_span, num_draft, temperature
         accept_lengths_tree = []
         with torch.inference_mode():
 
-            past_key_values, past_key_values_data, current_length_data = initialize_past_key_values(model.base_model)
-            model.past_key_values = past_key_values
-            model.past_key_values_data = past_key_values_data
-            model.current_length_data = current_length_data
-
-            model.current_length_data.zero_() # this is for rerun
+            # Initialize the past key and value states
+            if hasattr(model, "past_key_values"):
+                past_key_values = model.past_key_values
+                past_key_values_data = model.past_key_values_data
+                current_length_data = model.current_length_data
+                # Reset the past key and value states
+                current_length_data.zero_()
+            else:
+                (
+                    past_key_values,
+                    past_key_values_data,
+                    current_length_data,
+                ) = initialize_past_key_values(model.base_model)
+                model.past_key_values = past_key_values
+                model.past_key_values_data = past_key_values_data
+                model.current_length_data = current_length_data
 
 
             new_token = 0
