@@ -73,7 +73,7 @@ python3 get_datastore_chat.py --model-path lmsys/vicuna-7b-v1.5 # get datastore_
 Build a Python code generation datastore from [The Stack](https://huggingface.co/datasets/bigcode/the-stack) within 20 minutes (requires 924MB disk storage)
 ```bash
 cd datastore
-python3 get_datastore_code.py --model-path codellama/CodeLlama-7b-instruct-hf # get datastore_code_small.idx in this folder
+python3 get_datastore_code.py --model-path codellama/CodeLlama-7b-instruct-hf # get datastore_stack_small.idx in this folder
 ```
 
 ### Build a large one
@@ -85,7 +85,7 @@ python3 get_datastore_chat.py --model-path lmsys/vicuna-7b-v1.5 --large-datastor
 (optionally) Build a Python code generation datastore from [The Stack](https://huggingface.co/datasets/bigcode/the-stack) (requires 27GB disk storage)
 ```bash
 cd datastore
-python3 get_datastore_code.py --model-path codellama/CodeLlama-7b-instruct-hf --large-datastore True # get datastore_code_large.idx in this folder
+python3 get_datastore_code.py --model-path codellama/CodeLlama-7b-instruct-hf --large-datastore True # get datastore_stack_large.idx in this folder
 ```
 
 ## Inference
@@ -99,7 +99,7 @@ RAYON_NUM_THREADS=6 CUDA_VISIBLE_DEVICES=0 python3 gen_model_answer_rest.py --mo
 ### Inference on HumanEval
 ```bash
 cd human_eval
-RAYON_NUM_THREADS=6 CUDA_VISIBLE_DEVICES=0 python3 rest_test.py --model-path codellama/CodeLlama-7b-instruct-hf --datastore-path ../datastore/datastore_code_small.idx
+RAYON_NUM_THREADS=6 CUDA_VISIBLE_DEVICES=0 python3 rest_test.py --model-path codellama/CodeLlama-7b-instruct-hf --datastore-path ../datastore/datastore_stack_small.idx
 ```
 
 ### Free Chat
