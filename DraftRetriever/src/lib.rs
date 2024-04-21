@@ -353,6 +353,11 @@ impl Reader {
 
         let (draft_choices, max_branch) = get_draft_choices(paths.clone());
 
+        if draft_choices.len() > choices as usize {
+            // It might not be cut enough because cut_to_choices() is best effort, as mentioned in the comment above
+            return Err(exceptions::PyValueError::new_err("draft_choices was not cut enough"));
+        }
+
         let (draft_attn_mask, tree_indices, draft_position_ids, retrieve_indices) = generate_draft_buffers(draft_choices.clone(), max_branch);
 
         let max_length = paths.iter().map(|path| path.len()).max().unwrap_or(0);
