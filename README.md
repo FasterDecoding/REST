@@ -113,6 +113,9 @@ Note that the RAYON_NUM_THREADS environment variable control the maximum number 
 ## Other Models and Datastore
 In the examples above, we default to use Vicuna and CodeLlama. But actually you can use any LLaMA-based models you like by simply changing the "--model-path" argument. You can also build the datastore from any data you like. If you want to use architectures other than LLaMA, you can also modify the file model/modeling_llama_kv.py to match the corresponding model.
 
+Note: For models with a vocab size larger than 65535 (range of u16), you may change [this line in writer](https://github.com/FasterDecoding/REST/blob/main/DraftRetriever/src/lib.rs#L117) from `self.index_file.write_u16::<LittleEndian>(item as u16)?;` to `self.index_file.write_u32::<LittleEndian>(item as u32)?;`
+Besides, change [this line in Reader](https://github.com/FasterDecoding/REST/blob/main/DraftRetriever/src/lib.rs#L192) from `let int = LittleEndian::read_u16(&data_u8[i..i+2]) as i32;` to `let int = LittleEndian::read_u32(&data_u8[i..i+4]) as i32;`
+
 ## Citation
 ```
 @misc{he2023rest,
