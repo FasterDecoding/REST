@@ -67,6 +67,7 @@ impl Writer {
         let index_file = File::create(index_file_path)?;
         let index_file = BufWriter::new(index_file);
 
+        //  max_chunk_len can be whatever we want it to be, but the draftretriever Reader() seems to work fastest when we choose something large (i.e. 2e27)
         let max_chunk_len = max_chunk_len.unwrap_or(512 * 1024 * 1024);
         let vocab_size = vocab_size.unwrap_or(35000);
 
@@ -114,6 +115,8 @@ impl Writer {
         self.index_file.write_u32::<LittleEndian>((self.buffer.len() * 4) as u32)?; // self.buffer.len() is the length of the buffer (in # of integers). This is variable because sometimes we dump_data() early, its not always self.buffer.capacity().
         // * 4 because this value will actually tell us how much space is needed for this buffer in file, and we store each as 4 bytes
 
+        // For larger vocabularies (ie > 65,535), we should write the integers as i32 instead of u16
+        // Keeping i32 instead of u32 so negative values can be used as pad tokens (i.e. pad_path(path, max_length, -2))
         for &item in &self.buffer {
             self.index_file.write_i32::<LittleEndian>(item as i32)?;
         }
@@ -127,10 +130,6 @@ impl Writer {
 
         Ok(())
     }
-
-    // Some personal notes:
-    // (1) max_chunk_len can be whatever we want it to be, but the draftretriever Reader() works fastest when we choose something large
-    // (2) vocab_size should be the size of the vocabulary + 1. This is used in the suffix array construction.
 
     fn finalize(
         &mut self,
