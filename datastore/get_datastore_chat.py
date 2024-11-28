@@ -29,7 +29,7 @@ datastore_path = './datastore_chat_large.idx' if args.large_datastore else './da
 writer = draftretriever.Writer(
     index_file_path=datastore_path,
     max_chunk_len=512*1024*1024,
-    vocab_size=tokenizer.vocab_size,
+    vocab_size=tokenizer.vocab_size + len(tokenizer.get_added_vocab()),
 )
 if args.large_datastore:
     dataset = load_dataset('stingning/ultrachat', split='train')
