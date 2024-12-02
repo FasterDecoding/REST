@@ -41,7 +41,7 @@ datastore_path = './datastore_stack_large.idx' if args.large_datastore else './d
 writer = draftretriever.Writer(
     index_file_path=datastore_path,
     max_chunk_len=512 * 1024 * 1024,
-    vocab_size=tokenizer.vocab_size,
+    vocab_size=tokenizer.vocab_size + len(tokenizer.get_added_vocab()),
 )
 
 total_length = len(dataset)
