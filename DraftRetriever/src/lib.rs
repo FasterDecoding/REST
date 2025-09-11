@@ -256,9 +256,6 @@ impl Reader {
                         };
                     }
                 }
-                if start_of_indices.is_none() {
-                    return;
-                }
                 
                 // this binary search finds the end of the matching suffixes
                 let mut right_anchor = sub_index.suffixes_file_end - 4;
@@ -279,38 +276,39 @@ impl Reader {
                     }
                 }
 
-                let start_of_indices = start_of_indices.unwrap();
-                let end_of_indices = end_of_indices.unwrap();
+                match (start_of_indices, end_of_indices) {
+                    (Some(start), Some(end)) => {
+                        let mut suffixes = vec![0; end - start + 4];
 
-                let mut suffixes = vec![0; end_of_indices - start_of_indices + 4];
+                        sub_index.index_file.seek(SeekFrom::Start(start as u64)).unwrap();
+                        sub_index.index_file.read_exact(&mut suffixes).unwrap();
 
-                sub_index.index_file.seek(SeekFrom::Start(start_of_indices as u64)).unwrap();
-                sub_index.index_file.read_exact(&mut suffixes).unwrap();
+                        let mut matches_ranges = AHashSet::new();
 
-                let mut matches_ranges = AHashSet::new();
+                        let mut cnt = 0;
+                        let k = k.unwrap_or(5000);
+                        let long = long.unwrap_or(10);
+                        let indices_size = (end - start + 4) / 4;
+                        let initial_capacity = std::cmp::min(indices_size, k as usize);
+                        let mut local_results = Vec::with_capacity(initial_capacity);
 
-                let mut cnt = 0;
-                let k = k.unwrap_or(5000);
-                let long = long.unwrap_or(10);
-                let indices_size = (end_of_indices - start_of_indices + 4) / 4;
-                let initial_capacity = std::cmp::min(indices_size, k as usize);
-                let mut local_results = Vec::with_capacity(initial_capacity);
+                        for suffix in suffixes.chunks_mut(4) {
+                            let data_index = LittleEndian::read_i32(suffix);
+                            if matches_ranges.insert(data_index) {
+                                let sub_string_plus = &sub_index.data[data_index as usize + substring_i32.len() ..std::cmp::min(data_index as usize + substring_i32.len() + long as usize,  sub_index.data.len())];
+                            
+                                local_results.push(sub_string_plus.to_vec());
+                                cnt += 1;
+                                if cnt >= k as usize {
+                                    break;
+                                }
 
-                for suffix in suffixes.chunks_mut(4) {
-                    let data_index = LittleEndian::read_i32(suffix);
-                    if matches_ranges.insert(data_index) {
-                        let sub_string_plus = &sub_index.data[data_index as usize + substring_i32.len() ..std::cmp::min(data_index as usize + substring_i32.len() + long as usize,  sub_index.data.len())];
-                    
-                        local_results.push(sub_string_plus.to_vec());
-                        cnt += 1;
-                        if cnt >= k as usize {
-                            break;
+                            }
                         }
-
+                        results.lock().extend(local_results);
                     }
+                    _ => return, 
                 }
-
-                results.lock().extend(local_results);
             }
         );
 
