@@ -285,7 +285,7 @@ impl Reader {
                 }
 
                 let start_of_indices = start_of_indices.unwrap();
-                let end_of_indices = end_of_indices.unwrap();
+                let end_of_indices = end_of_indices.unwrap_or(start_of_indices);
 
                 let mut suffixes = vec![0; end_of_indices - start_of_indices + 4];
 
